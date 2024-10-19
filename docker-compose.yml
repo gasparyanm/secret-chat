@@ -1,0 +1,73 @@
+services:
+    app:
+        build:
+            context: ./docker/php
+        container_name: app
+        restart: unless-stopped
+        working_dir: /var/www
+        volumes:
+            - .:/var/www
+        networks:
+            - app-network
+        ports:
+            - "9000:9000"
+        depends_on:
+            - mysql
+
+
+    nginx:
+        container_name: nginx
+        image: nginx:1.12.1-alpine
+        restart: always
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - ./docker/nginx/conf.d:/etc/nginx/conf.d
+            - ./public:/var/www/public:rw
+            - ./storage/app/public/:/var/www/public/storage/:rw
+        networks:
+            - app-network
+
+    mysql:
+        image: mysql:8.0
+        container_name: secret-message-db
+        restart: unless-stopped
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: secret_message
+            MYSQL_USER: user
+            MYSQL_PASSWORD: secret
+        volumes:
+            - dbdata:/var/lib/mysql
+            - ./docker/mysql/my.cnf/:/etc/mysql/my.cnf
+        networks:
+            - app-network
+        ports:
+            - "3307:3306"
+
+    npm:
+        image: node:17
+        container_name: node-builder
+        working_dir: /var/www
+        volumes:
+            - .:/var/www
+        command: ["npm", "install"]
+
+    mailhog:
+        container_name: mailhog
+        image: mailhog/mailhog
+        restart: always
+        ports:
+            - "1025:1025"  # SMTP port
+            - "8025:8025"  # Web interface port
+        networks:
+            - app-network
+
+networks:
+    app-network:
+        driver: bridge
+
+volumes:
+    dbdata:
+        driver: local
