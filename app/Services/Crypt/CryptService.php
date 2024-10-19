@@ -2,7 +2,7 @@
 
 namespace App\Services\Crypt;
 
-use Illuminate\Support\Facades\Crypt;
+use Exception;
 
 class CryptService implements CryptInterface
 {
@@ -10,7 +10,7 @@ class CryptService implements CryptInterface
     private const SEPARATOR = '::';
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function encryptMessage(string $message, string $key): string
     {
@@ -29,7 +29,7 @@ class CryptService implements CryptInterface
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function generateDecryptionKey(): string
     {

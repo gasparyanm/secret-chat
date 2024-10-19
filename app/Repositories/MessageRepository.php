@@ -31,4 +31,10 @@ class MessageRepository
             ->where('decryption_key',$decryptKey)
             ->first();
     }
+
+    public function makeMessageAsRead(Message $message): void
+    {
+        $message->is_read = true;
+        $message->save();
+    }
 }

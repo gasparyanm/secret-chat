@@ -10,8 +10,9 @@ use Exception;
 
 class MessageService
 {
-    public function __construct(private readonly MessageRepository $messageRepository)
-    {
+    public function __construct(
+        private readonly MessageRepository $messageRepository
+    ) {
     }
 
     public function create(
@@ -39,7 +40,7 @@ class MessageService
     {
         $message = $this->messageRepository->getRecipientMessageByKey($decryptKey, $recipient);
 
-        if(is_null($message)) {
+        if (is_null($message)) {
             throw new Exception('Your provided decrypt key is invalid!');
         }
 
@@ -49,11 +50,9 @@ class MessageService
 
         $messageHash = $message->text;
 
+        $this->messageRepository->makeMessageAsRead($message);
+
         if (is_null($message->expires_at)) {
-//            $message->is_read = true;
-//            $message->save();
-//        } else {
-//            delete after recipient read
             DeleteExpireMessageJob::dispatch($message);
         }
 
