@@ -11,7 +11,8 @@ class DeleteExpireMessageJob implements ShouldQueue
     use Queueable;
 
     public function __construct(public Message $message)
-    { }
+    {
+    }
 
     public function handle(): void
     {

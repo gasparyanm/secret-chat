@@ -19,7 +19,6 @@ class MessageController extends Controller
         private readonly CryptInterface $cryptInterface,
         private readonly MessageService $messageService,
     ) {
-
     }
 
     public function writeForm(Request $request): View
@@ -51,13 +50,12 @@ class MessageController extends Controller
             $requestData['expiry_option']
         );
 
-        // did not write in observer to see if email failed to send
         Mail::to($requestData['recipient'])->send(new SendDecryptKey($decryptionKey));
 
         return redirect()->back()->with('status', 'ok');
     }
 
-    public function read(ReadMessageRequest $request):RedirectResponse
+    public function read(ReadMessageRequest $request): RedirectResponse
     {
         $decryptionKey = $request->decryption_key;
 
