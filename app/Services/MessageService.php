@@ -48,6 +48,10 @@ class MessageService
             throw new Exception('Message has already been read.');
         }
 
+        if ($message->expires_at->lt(now())) {
+            throw new Exception('Message expired.');
+        }
+
         $messageHash = $message->text;
 
         $this->messageRepository->makeMessageAsRead($message);
